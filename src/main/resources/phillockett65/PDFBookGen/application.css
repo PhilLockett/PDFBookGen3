@@ -1,0 +1,159 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.root{
+    -fx-background-color: #303030;
+    -fx-border-color: white;
+}
+
+.top-bar{
+    -fx-background-color: linear-gradient(to bottom, #505050, #303030);
+}
+
+.top-bar:hover{
+    -fx-background-color: linear-gradient(to bottom, #606060, #404040);
+}
+
+.unfocussed-root{
+    -fx-border-color: grey;
+}
+
+.unfocussed-bar{
+    -fx-background-color: linear-gradient(to bottom, #404040, #202020);
+}
+
+.top-bar-icon{
+    -fx-stroke: white;
+}
+
+.top-bar-icon:hover{
+    -fx-background-color: red;
+}
+
+.top-bar, .heading{
+    -fx-font-size: 15;
+    -fx-text-fill: #e8e8e8;
+    -fx-font-weight: bold;
+}
+
+.label, .check-box, .radio-button{
+    -fx-text-fill: #e8e8e8;
+}
+
+.titled-pane{
+    -fx-text-fill: white;
+}
+.title{
+    -fx-background-color: transparent;
+    -fx-font-size: 14.5;
+    -fx-font-weight: bold;
+}
+
+.tooltip{
+    -fx-font-size: 14;
+    -fx-font-style: italic;
+    -fx-font-weight: normal;
+    -fx-text-fill: black;
+    -fx-background-color: #e8e8e8;
+}
+.text-field:readonly{
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-color: #d0d0d0;
+}
+.combo-box{
+    -fx-font-weight: bold;
+    -fx-background-color: #e8e8e8;
+}
+.text-field{
+    -fx-text-fill: #404040;
+    -fx-font-weight: bold;
+    -fx-background-color: #e8e8e8;
+}
+.text-area{
+    -fx-text-fill: #e8e8e8;
+}
+.content{
+    -fx-background-color: #080808;
+	-fx-border-color: #c0B0B0;
+	-fx-border-insets: 1;
+}
+.spinner{
+    -fx-background-color: #282828;
+}
+
+.choice-box, .color-picker, .button{
+    -fx-background-color: linear-gradient(to bottom, #BB6662, #7B2622);
+    -fx-text-fill: #e8e8e8;
+    -fx-font-weight: bold;
+}
+.toggle-button:selected{
+    -fx-background-color: green;
+    -fx-text-fill: #e8e8e8;
+    -fx-font-weight: bold;
+}
+.toggle-button{
+    -fx-background-color: red;
+    -fx-text-fill: #e8e8e8;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+}
+.context-menu, .menu-item:focused{
+    -fx-background-color: #81423F;
+    -fx-text-fill: #e8e8e8;
+    -fx-font-weight: bold;
+}
+.menu-bar{
+    -fx-background-color: transparent;
+    -fx-text-fill: #e8e8e8;
+    -fx-font-weight: bold;
+}
+.menu-button:hover, .menu-button:showing, .menu-item:hover{
+    -fx-background-color: #7B2622;
+    -fx-text-fill: #e8e8e8;
+    -fx-font-weight: bold;
+}
+
+.increment-arrow-button{
+    -fx-background-color: linear-gradient(to bottom, #BB6662, #9B4642);
+}
+.decrement-arrow-button{
+    -fx-background-color: linear-gradient(to bottom, #9B4642, #7B2622);
+}
+.increment-arrow, .decrement-arrow, .arrow{
+    -fx-background-color: white;
+}
+
+.imageButton{
+    -fx-background-color: null;
+    -fx-text-fill: null;
+}
+
+.progress-bar{
+    -fx-accent: #81423F;
+}
+
+.table-view{
+    -fx-background-color: black;
+    -fx-font-weight: bold;
+}
+.column-header, .filler{
+    -fx-background-color: #81423F;
+    -fx-font-weight: bold;
+}
+/*
+.list-cell{
+    -fx-font-weight: bold;
+}
+
+.list-cell:selected{
+    -fx-text-fill: black;
+    -fx-background-color: #81423F;
+    -fx-accent: #81423F;
+}
+.list-cell:even{
+    -fx-background-color: #f8f8f8;
+}
+.list-cell:odd{
+    -fx-background-color: #e8e8e8;
+}
+*/
