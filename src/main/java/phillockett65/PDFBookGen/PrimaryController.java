@@ -272,13 +272,21 @@ public class PrimaryController {
 
     @FXML
     private void helpAboutOnAction() {
-        Alert alert = new Alert(AlertType.INFORMATION);
         final String title = model.getTitle();
+
+        Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("About " + title);
         alert.setHeaderText(title);
         alert.setContentText(title + " is an application for converting a PDF document into a 2-up booklet form.");
 
         alert.showAndWait();
+    }
+
+    @FXML
+    private void helpUserGuideOnAction() {
+        final String title = model.getTitle();
+
+        HelpControl.showControl(title + " User Guide");
     }
 
     /**

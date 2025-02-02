@@ -70,9 +70,14 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
-                    <MenuItem fx:id="helpAboutOnAction" mnemonicParsing="false" onAction="#helpAboutOnAction" text="About...">
+                    <MenuItem mnemonicParsing="false" onAction="#helpAboutOnAction" text="About...">
                            <accelerator>
                               <KeyCodeCombination alt="DOWN" code="A" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#helpUserGuideOnAction" text="User Guide...">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="U" control="UP" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
                         </MenuItem>
                   </items>
@@ -130,7 +135,7 @@
                         <Label text="Last Page:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
                         <Spinner fx:id="firstPageSpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Spinner fx:id="lastPageSpinner" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="Total page count:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
+                        <Label text="Total Page Count:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
                         <Label text="Output Paper Size:" GridPane.halignment="RIGHT" />
                         <ChoiceBox fx:id="paperSizeChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" />
                         <Label fx:id="countLabel" text="PageCount" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
