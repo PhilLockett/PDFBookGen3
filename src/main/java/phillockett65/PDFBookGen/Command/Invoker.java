@@ -20,7 +20,7 @@
 
 /*
  * Invoker is a class that is responsible for invoking calls and handling the 
- * do undo mechanism.
+ * do undo/redo mechanism.
  * It is implemented as a basic (non thread safe) Singleton.
  */
 package phillockett65.PDFBookGen.Command;
@@ -39,6 +39,8 @@ public class Invoker {
     private LinkedList<Command> redoStack = new LinkedList<>();
     private LinkedList<Command> doQueue = new LinkedList<>();
 
+    private Command newCommand;
+
     /**
      * Private default constructor - part of the Singleton Design Pattern.
      * Called at initialization only, constructs the single private instance.
@@ -47,33 +49,73 @@ public class Invoker {
     }
 
     /**
-     * @param command passed in.
-     * @return true if new command is triggered by a handler after an undo, 
-     * false otherwise. 
+     * Check if 'new' command does not change the original value.
+     * @return true if command changes nothing, false otherwise.
      */
-    private boolean isHandlerCausingARevert(Command command) {
+    private boolean isNewCommandUnchanging() {
+        return !newCommand.isChanging();
+    }
+
+    /**
+     * Check if 'new' command is triggered by a handler after an undo.
+     * @return true if 'new' command is triggered by handler, false otherwise. 
+     */
+    private boolean isHandlerCausingARevert() {
         if (redoStack.isEmpty()) {
             return false;
         }
 
-        return redoStack.peek().isReverting(command);
+        return redoStack.peek().isReverting(newCommand);
     }
 
-    private boolean isNewCommandUnchanging(Command command) {
-        return !command.isChanging();
-    }
-
+    /**
+     * Check if a 'current' command is unavailable.
+     * @return true if there is no 'current' command, false otherwise.
+     */
     private boolean isNoCurrentCommand() {
         return undoStack.isEmpty();
     }
 
-    private boolean isACurrentCommandUpdate(Command command) {
-        return undoStack.peek().update(command);
+    /**
+     * Attempt to update the 'current' command with the 'new' command.
+     * Assumes there is a 'current' command available.
+     * @return true if the update was successful, false otherwise.
+     */
+    private boolean isACurrentCommandUpdate() {
+        return undoStack.peek().update(newCommand);
     }
 
-    private boolean isCurrentCommandChanging() {
-        return undoStack.peek().isChanging();
+    /**
+     * Check if the 'current' command no longer changes it's original value.
+     * Assumes there is a 'current' command available.
+     * @return true if the 'current' command is unchanging, false otherwise.
+     */
+    private boolean isCurrentCommandUnchanging() {
+        return !undoStack.peek().isChanging();
     }
+
+    /**
+     * Execute the 'new' command.
+     */
+    private void executeNewCommand() {
+        newCommand.execute();
+    }
+
+    /**
+     * Stack the 'new' command in case there is an undo request and clear out 
+     * the redo stack.
+     */
+    private void pushNewCommand() {
+        undoStack.push(newCommand);
+
+        redoStack.clear();
+    }
+
+
+
+    /************************************************************************
+     * Support code for public interface.
+     */
 
     /**
      * Singleton implementation.
@@ -87,17 +129,18 @@ public class Invoker {
      * @param command to execute.
      */
     public void invoke(Command command) {
-        Debug.trace(DD, "invoke(" + command + ")");
+        newCommand = command;
+        Debug.trace(DD, "invoke(" + newCommand + ")");
 
-        // If 'new' command does not change the value, silently drop it.
-        if (isNewCommandUnchanging(command)) {
+        // If 'new' command does not change it's value, silently drop it.
+        if (isNewCommandUnchanging()) {
             Debug.info(DD, "Dropped unchanged");
 
             return;
         }
 
         // If 'new' command is a handler revert, silently drop it.
-        if (isHandlerCausingARevert(command)) {
+        if (isHandlerCausingARevert()) {
             Debug.info(DD, "Dropped revert");
 
             return;
@@ -105,43 +148,37 @@ public class Invoker {
 
         // No 'current' command, so just excute and stack it.
         if (isNoCurrentCommand()) {
-            command.execute();
+            executeNewCommand();
+            pushNewCommand();
 
-            undoStack.push(command);
             Debug.info(DD, "Pushed first ");
-
-            redoStack.clear();
 
             return;
         }
 
-        // If this is a successful update to the 'current' command, execute it.
-        if (isACurrentCommandUpdate(command)) {
-            command.execute();
+        // If this is an update to the 'current' command, execute it.
+        if (isACurrentCommandUpdate()) {
+            executeNewCommand();
 
-            Command current = undoStack.peek();
-
+            final Command current = undoStack.peek();
             Debug.info(DD, "Updated and " + (current.isChanging() ? "different" : "SAME") + " ");
 
             return;
         }
 
         // If 'current' command has been changed back to original value, 
-        // silently drop it.
-        if (isCurrentCommandChanging() == false) {
+        // silently drop it before we handle the 'new' command.
+        if (isCurrentCommandUnchanging()) {
             Command dropped = undoStack.pop();
             Debug.info(DD, "Dropping unchange current command ");
             Debug.info(DD, dropped.toString());
         }
 
         // Handle the new command.
-        command.execute();
+        executeNewCommand();
+        pushNewCommand();
 
-        undoStack.push(command);
         Debug.info(DD, "Pushed ");
-        
-        redoStack.clear();
-
     }
 
     /**
