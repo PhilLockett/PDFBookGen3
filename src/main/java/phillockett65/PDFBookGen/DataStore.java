@@ -39,8 +39,12 @@ public class DataStore implements Serializable {
     // Debug delta used to adjust the local logging level.
     private static final int DD = 0;
 
+    public Double mainX;
+    public Double mainY;
+
     public String sourceDocument;
     public String outputFileName;
+    public String outputFilePath;
 
     public String paperSize;
     public Boolean rotateCheck;
@@ -121,8 +125,12 @@ public class DataStore implements Serializable {
      */
     public void dump() {
         Debug.info(DD, "");
+        Debug.info(DD, "mainX = " + mainX);
+        Debug.info(DD, "mainY = " + mainY);
+        Debug.info(DD, "");
         Debug.info(DD, "sourceDocument = " + sourceDocument);
         Debug.info(DD, "outputFileName = " + outputFileName);
+        Debug.info(DD, "outputFilePath = " + outputFilePath);
         Debug.info(DD, "");
         Debug.info(DD, "paperSize = " + paperSize);
         Debug.info(DD, "rotateCheck = " + rotateCheck);

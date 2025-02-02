@@ -48,6 +48,9 @@ public class Model {
     private static Model model = new Model();
 
     private Stage stage;
+    private PrimaryController controller;
+
+    private DataStore data;
 
 
     /************************************************************************
@@ -55,11 +58,30 @@ public class Model {
      */
 
     /**
-     * @return the file path of the settings data file.
+     * Takes a file name and strips off any extension.
+     * @param fileName
+     * @return fileName without extension.
      */
-    public String getSettingsFile() {
-        return DATAFILE;
+    private static String getFileStem(String fileName) {
+        if (!fileName.contains("."))
+            return fileName;
+
+        return fileName.substring(0,fileName.lastIndexOf("."));
     }
+
+    /**
+     * Takes a full file path and extracts the parent directory.
+     * @param file path.
+     * @return the parent directory.
+     */
+    private static String getFileParent(String file) {
+        if (file.isBlank())
+            return "."; 
+
+        File current = new File(file);
+        return current.getParent();
+    }
+
 
     /**
      * Builds the cancel button as a Pane.
@@ -133,32 +155,37 @@ public class Model {
      * objects after the controls have been initialised.
      */
     public void initialize() {
-        Debug.trace(DD, "Model initialized.");
+        Debug.trace(DD, "Model initialize()");
 
         initializeFileNamesPanel();
         initializeOutputContentPanel();
         initializeSignatureStatePanel();
         initializeStatusLine();
-
-        if (!readData())
-            defaultSettings();
-
-        // Calculate the signature data AFTER reading previous settings.
-        BuildSignature();
     }
 
     /**
      * Called by the controller after the stage has been set. Completes any 
      * initialization dependent on other components being initialized.
      */
-    public void init(Stage primaryStage) {
-        Debug.trace(DD, "Model init.");
+    public void init(Stage primaryStage, PrimaryController primaryController) {
+        Debug.trace(DD, "Model init()");
         
         stage = primaryStage;
+        controller = primaryController;
+
+        if (!readData()) {
+            defaultSettings();
+        }
+
+        // Calculate the signature data AFTER reading previous settings.
+        BuildSignature();
     }
 
     public Stage getStage() { return stage; }
+    public PrimaryController getController() { return controller; }
+
     public String getTitle() { return stage.getTitle(); }
+    public void syncUI() { controller.syncUI(); }
 
     public void close() {
         stage.close();
@@ -168,13 +195,16 @@ public class Model {
      * Set all attributes to the default values.
      */
     public void defaultSettings() {
-        setSourceFilePath("");
-        setOutputFilePath("./booklet");
+        data = new DataStore();
 
-        setPaperSize("Letter");
-        setRotateCheck(true);
+        data.sourceDocument = "";
+        data.outputFileName = "booklet";
+        data.outputFilePath = "";
+
+        data.paperSize = "Letter";
+        data.rotateCheck = true;
+
         setPageCount(100);
-        setPageRanges(1, 100);
 
         setSigSize(1);
     }
@@ -190,19 +220,15 @@ public class Model {
      * @return true if data successfully written to disc, false otherwise.
      */
     public boolean writeData() {
-        DataStore data = new DataStore();
+        data.mainX = stage.getX();
+        data.mainY = stage.getY();
 
-        data.sourceDocument = getSourceFilePath();
-        data.outputFileName = getOutputFilePath();
-
-        data.paperSize = getPaperSize();
-        data.rotateCheck = isRotateCheck();
         data.firstPage = getFirstPage();
         data.lastPage = getLastPage();
 
         data.sigSize = getSigSize();
 
-        if (!DataStore.writeData(data, getSettingsFile())) {
+        if (!DataStore.writeData(data, DATAFILE)) {
             data.dump();
 
             return false;
@@ -217,15 +243,15 @@ public class Model {
      * @return true if the model is successfully updated, false otherwise.
      */
     public boolean readData() {
-        DataStore data = DataStore.readData(getSettingsFile());
-        if (data == null)
+        data = DataStore.readData(DATAFILE);
+        if (data == null) {
             return false;
+        }
 
-        setSourceFilePath(data.sourceDocument);
-        setOutputFilePath(data.outputFileName);
+        stage.setX(data.mainX);
+        stage.setY(data.mainY);
 
-        setPaperSize(data.paperSize);
-        setRotateCheck(data.rotateCheck);
+        setPageCount(fetchPageCount());
         setPageRanges(data.firstPage, data.lastPage);
         
         setSigSize(data.sigSize);
@@ -239,92 +265,106 @@ public class Model {
      * Support code for "File Names" panel.
      */
 
-    private String sourceDocument;
-    private String outputFilePath;
-
-    /**
-     * Set the file path for the source PDF document.
-     * @param text string of the source document file path.
-     */
-    public void setSourceFilePath(String text) {
-        sourceDocument = text;
-        setPageCount(fetchPageCount());
-    }
-
     /**
      * @return the number of pages in the current source document.
      */
     private int fetchPageCount() {
-        if (isSourceFilePath())
-            return PDFBook.getPDFPageCount(sourceDocument);
+        if (isSourceDocument()) {
+            return PDFBook.getPDFPageCount(data.sourceDocument);
+        }
 
         return 1;
     }
 
     /**
+     * Set the file path for the source PDF document.
+     * @param text string of the source document file path.
+     */
+    public void setSourceDocument(String text) {
+        data.sourceDocument = text;
+        setPageCount(fetchPageCount());
+    }
+
+    /**
      * @return the file path for the current source PDF document.
      */
-    public String getSourceFilePath() { return sourceDocument; }
+    public String getSourceDocument() { return data.sourceDocument; }
 
     /**
      * @return true if a source document has been selected, false otherwise.
      */
-    public boolean isSourceFilePath() { if (sourceDocument == null) return false; return !sourceDocument.isBlank(); }
-
-    private String fileStem(String fileName) {
-        if (!fileName.contains("."))
-            return fileName;
-
-        return fileName.substring(0,fileName.lastIndexOf("."));
+    public boolean isSourceDocument() {
+        if (data.sourceDocument == null) {
+            return false;
+        }
+        
+        return !data.sourceDocument.isBlank();
     }
 
-    private String getFileParent(String file) {
-        if (file.isBlank())
-            return "."; 
+    /**
+     * Set the file name (without extension) for the generated PDF document.
+     * @param text string of the file name for the generated document.
+     */
+    public void setOutputFileName(String text) { data.outputFileName = text; }
 
-        File current = new File(file);
-        return current.getParent();
+    /**
+     * @return the file name (without extension) for the generated PDF document.
+     */
+    public String getOutputFileName() { return data.outputFileName; }
+
+    /**
+     * @return the file name (with extension) for the generated PDF document.
+     */
+    public String getFullOutputFileName() { return getOutputFileName() + ".pdf"; }
+
+
+    /**
+     * @return the parent directory path for the generated PDF document.
+     */
+    private String getOutputFilePath() { return data.outputFilePath; }
+
+    /**
+     * @return true if the parent directory path for the generated PDF document 
+     * has been set, false otherwise.
+     */
+    private boolean isOutputFilePath() {
+        if (data.outputFilePath == null) {
+            return false;
+        }
+
+        return !data.outputFilePath.isBlank();
     }
 
-    private String getOutputFileParent() {
+
+    public String getOutputFileParent() {
         if (isOutputFilePath())
-            return getFileParent(getOutputFilePath());
+            return getOutputFilePath();
 
-        if (isSourceFilePath())
-            return getFileParent(getSourceFilePath());
+        if (isSourceDocument())
+            return getFileParent(getSourceDocument());
 
         return ".";
     }
 
-    /**
-     * Set the file name for the generated PDF document.
-     * @param text string of the file name for the generated document.
-     */
-    public void setOutputFileName(String text) { outputFilePath = getOutputFileParent() + "\\" + text + ".pdf"; }
-
-    /**
-     * Set the file path for the generated PDF document.
-     * @param text string of the file path for the generated document.
-     */
-    public void setOutputFilePath(String text) { outputFilePath = text; }
-
-    /**
-     * @return the file name for the generated PDF document.
-     */
-    public String getOutputFileName() {
-        File current = new File(getOutputFilePath());
-        return fileStem(current.getName());
+    public boolean isOutputFileParent() {
+        return !getOutputFileParent().isBlank();
     }
 
-    /**
-     * @return the full file path for the generated PDF document.
-     */
-    public String getOutputFilePath() { return outputFilePath; }
+    public void setOutputDocument(String text) {
+        File current = new File(text);
 
-    /**
-     * @return true if a source document has been selected, false otherwise.
-     */
-    public boolean isOutputFilePath() { if (outputFilePath == null) return false; return !outputFilePath.isBlank(); }
+        data.outputFileName = getFileStem(current.getName());
+        data.outputFilePath = current.getParent();
+    }
+
+    public String getOutputDocument() {
+        return getOutputFileParent() + "\\" + getFullOutputFileName();
+    }
+
+    public boolean isOutputDocument() {
+        return !getOutputDocument().isBlank();
+    }
+
 
     /**
      * Initialize "File Names" panel.
@@ -338,10 +378,8 @@ public class Model {
      * Support code for "Output Content" panel.
      */
 
-    private String paperSize;
     private ObservableList<String> paperSizeList = FXCollections.observableArrayList();
 
-    private boolean rotateCheck;
     private int pageCount = 50;
 
     private SpinnerValueFactory<Integer> firstPageSVF;
@@ -357,32 +395,34 @@ public class Model {
      * Note the selected paper size.
      * @param value of the currently selected paper size as a string.
      */
-    public void setPaperSize(String value) { paperSize = value; }
+    public void setPaperSize(String value) { data.paperSize = value; }
 
     /**
      * @return the currently selected paper size string.
      */
-    public String getPaperSize() { return paperSize; }
+    public String getPaperSize() { return data.paperSize; }
 
 
     /**
      * Indicate whether the reverse side page is to be rotated.
      * @param state true if the reverse page is to be rotated, false otherwise.
      */
-    public void setRotateCheck(boolean state) { rotateCheck = state; }
+    public void setRotateCheck(boolean state) { data.rotateCheck = state; }
 
     /**
      * @return true if the reverse side page is to be rotated, false otherwise.
      */
-    public boolean isRotateCheck() { return rotateCheck; }
+    public boolean isRotateCheck() { return data.rotateCheck; }
 
 
     private int getPageCount() { return pageCount; }
     private void setPageCount(int value) {
+        Debug.trace(DD, "setPageCount(" + value + ")");
         pageCount = value;
         firstPageSVF = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, value, 1);
         lastPageSVF = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, value, value);
         BuildSignature();
+        syncUI();
     }
 
 
@@ -394,15 +434,17 @@ public class Model {
     private int getFirstPage() { return firstPageSVF.getValue(); }
 
     /**
-     * Selected first page has changed, so synchronize values.
+     * Set the number of the first page to use.
+     * @param first page number required.
      */
-    public void syncFirstPage() {
+    public void setFirstPage(int first) { 
         // Make sure Last Page spinner has a minimum of the new First Page value.
-        final int first = getFirstPage();
         int current = getLastPage();
         if (current < first)
             current = first;
         lastPageSVF = new SpinnerValueFactory.IntegerSpinnerValueFactory(first, getPageCount(), current);
+
+        firstPageSVF.setValue(first);
 
         BuildSignature();
     }
@@ -415,15 +457,17 @@ public class Model {
     private int getLastPage() { return lastPageSVF.getValue(); }
 
     /**
-     * Selected last page has changed, so synchronize values.
+     * Set the number of the last page to use.
+     * @param last page number required.
      */
-    public void syncLastPage() {
+    public void setLastPage(int last) {
         // Make sure First Page spinner has a maximum of the new Last Page value.
-        final int last = getLastPage();
         int current = getFirstPage();
         if (current > last)
             current = last;
         firstPageSVF = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, last, current);
+
+        lastPageSVF.setValue(last);
 
         BuildSignature();
     }
@@ -438,6 +482,7 @@ public class Model {
      */
     private void setPageRanges(int first, int last) {
         final int count = getPageCount();
+        Debug.trace(DD, "setPageCount(" + first + ", " + last + ") - " + count);
 
         if (last > count)
             last = count;
@@ -454,7 +499,7 @@ public class Model {
      * @return true if document was generated, false otherwise.
      */
     public boolean generate() {
-        PDFBook booklet = new PDFBook(getSourceFilePath(), getOutputFilePath());
+        PDFBook booklet = new PDFBook(getSourceDocument(), getOutputDocument());
 
         booklet.setPageSize(getPaperSize());
         booklet.setSheetCount(getSigSize());
@@ -495,7 +540,7 @@ public class Model {
     public SpinnerValueFactory<Integer> getSigSizeSVF() { return sigSizeSVF; }
 
     private int getSigSize() { return sigSizeSVF.getValue(); }
-    private void setSigSize(int value) { sigSizeSVF.setValue(value); }
+    public void setSigSize(int value) { sigSizeSVF.setValue(value); }
 
     /**
      * Signature size has changed, so synchronize values.

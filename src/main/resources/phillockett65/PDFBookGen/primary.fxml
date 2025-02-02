@@ -100,7 +100,7 @@
                     </rowConstraints>
                      <children>
                         <Label text="Source Document:" GridPane.halignment="RIGHT" />
-                        <TextField fx:id="sourceDocumentTextField" editable="false" onKeyTyped="#sourceDocumentTextFieldKeyTyped" GridPane.columnIndex="1" GridPane.columnSpan="2" />
+                        <TextField fx:id="sourceDocumentTextField" editable="false" GridPane.columnIndex="1" GridPane.columnSpan="2" />
                         <Label text="Output File Name:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                         <TextField fx:id="outputFileNameTextField" onKeyTyped="#outputFileNameTextFieldKeyTyped" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseButtonActionPerformed" text="Load..." GridPane.columnIndex="3" GridPane.halignment="RIGHT" />

@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.Optional;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -48,6 +49,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import phillockett65.Debug.Debug;
+import phillockett65.PDFBookGen.Command.FirstPageCommand;
+import phillockett65.PDFBookGen.Command.Invoker;
+import phillockett65.PDFBookGen.Command.LastPageCommand;
+import phillockett65.PDFBookGen.Command.OutputDocumentCommand;
+import phillockett65.PDFBookGen.Command.OutputFileNameCommand;
+import phillockett65.PDFBookGen.Command.PaperSizeCommand;
+import phillockett65.PDFBookGen.Command.RotateCommand;
+import phillockett65.PDFBookGen.Command.SignatureSizeCommand;
+import phillockett65.PDFBookGen.Command.SourceDocumentCommand;
 
 
 public class PrimaryController {
@@ -56,6 +66,7 @@ public class PrimaryController {
     private static final int DD = 0;
 
     private Model model;
+    private Invoker invoker;
 
     @FXML
     private VBox root;
@@ -72,6 +83,7 @@ public class PrimaryController {
     public PrimaryController() {
         Debug.trace(DD, "PrimaryController constructed.");
         model = Model.getInstance();
+        invoker = Invoker.getInstance();
     }
 
     /**
@@ -80,7 +92,7 @@ public class PrimaryController {
      */
     @FXML
     public void initialize() {
-        Debug.trace(DD, "PrimaryController initialized.");
+        Debug.trace(DD, "PrimaryController initialize()");
         model.initialize();
 
         initializeTopBar();
@@ -97,10 +109,37 @@ public class PrimaryController {
      * @param mainController used to call the centralized controller.
      */
     public void init(Stage primaryStage) {
-        Debug.trace(DD, "PrimaryController init.");
-        model.init(primaryStage);
+        Debug.trace(DD, "PrimaryController init()");
+        model.init(primaryStage, this);
         syncUI();
         setStatusMessage("Ready.");
+        invoker.clear();
+
+        // Use filter so text based controls do not affect the undo/redo.
+        primaryStage.getScene().addEventFilter(KeyEvent.KEY_TYPED, 
+            new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    final String key = event.getCharacter();
+        
+                    switch ((int)key.charAt(0)) {
+                    case 25:
+                        invoker.redo();
+                        break;
+        
+                    case 26:
+                        invoker.undo();
+                        break;
+        
+                    case 13:
+                        invoker.dump();
+                        break;
+        
+                    default:
+                        break;
+                    }
+                }
+            });
     }
 
     /**
@@ -123,16 +162,16 @@ public class PrimaryController {
      * Synchronise all controls with the model. This should be the last step 
      * in the initialisation.
      */
-    private void syncUI() {
-        sourceDocumentTextField.setText(model.getSourceFilePath());
+    public void syncUI() {
+        syncSourceDocumentTextField();
 
-        final boolean genAvailable = model.isSourceFilePath();
+        final boolean genAvailable = model.isSourceDocument();
         generateButton.setDisable(!genAvailable);
         genMenuItem.setDisable(!genAvailable);
         asMenuItem.setDisable(!genAvailable);
 
-        outputFileNameTextField.setText(model.getOutputFileName());
-        outputDocumentTextField.setText(model.getOutputFilePath());
+        syncOutputFileNameTextField();
+        syncOutputDocumentTextField();
 
         syncFirstPageSpinner();
         syncLastPageSpinner();
@@ -146,6 +185,15 @@ public class PrimaryController {
         setSignatureStateMessages();
     }
 
+    private void syncSourceDocumentTextField() {
+        sourceDocumentTextField.setText(model.getSourceDocument());
+    }
+    public void syncOutputFileNameTextField() {
+        outputFileNameTextField.setText(model.getOutputFileName());
+    }
+    public void syncOutputDocumentTextField() {
+        outputDocumentTextField.setText(model.getOutputDocument());
+    }
 
 
     /************************************************************************
@@ -200,9 +248,8 @@ public class PrimaryController {
 
     @FXML
     private void fileSaveOnAction() {
-        if (model.isOutputFilePath()) {
-            if (model.generate())
-                setStatusMessage("Saved to: " + model.getOutputFilePath());
+        if (model.isOutputDocument()) {
+            fileSaved(model.generate());
         }
         else
             launchSaveAsWindow();
@@ -238,18 +285,25 @@ public class PrimaryController {
      * Use a file chooser to select a test file.
     * @return true if a file was selected and loaded, false otherwise.
     */
-    private boolean launchLoadWindow() {
-        final boolean loaded = openFile();
-        setStatusMessage("Loaded file: " + model.getSourceFilePath());
-
-        return loaded;
+    private void launchLoadWindow() {
+        openFile();
     }
 
-    private boolean launchSaveAsWindow() {
-        final boolean saved = saveAs();
-        setStatusMessage("Saved file: " + model.getOutputFilePath());
+    private void launchSaveAsWindow() {
+        saveAs();
+    }
 
-        return saved;
+    public void fileLoaded(boolean loaded) {
+        if (loaded) {
+            syncSourceDocumentTextField();
+            setStatusMessage("Loaded file: " + model.getSourceDocument());
+        }
+    }
+
+    public void fileSaved(boolean saved) {
+        if (saved) {
+            setStatusMessage("Saved file: " + model.getOutputDocument());
+        }
     }
 
 
@@ -270,16 +324,13 @@ public class PrimaryController {
     private Button browseButton;
 
     @FXML
-    private void sourceDocumentTextFieldKeyTyped(KeyEvent event) {
-        Debug.trace(DD, "sourceDocumentTextFieldKeyTyped() " + event.toString());
-        model.setOutputFileName(sourceDocumentTextField.getText());
-    }
-
-    @FXML
     private void outputFileNameTextFieldKeyTyped(KeyEvent event) {
-        Debug.trace(DD, "outputFileNameTextFieldKeyTyped() " + event.toString());
-        model.setOutputFileName(outputFileNameTextField.getText());
-        outputDocumentTextField.setText(model.getOutputFilePath());
+        Debug.trace(DD, "outputFileNameTextFieldKeyTyped() " + outputFileNameTextField.getText());
+        // model.setOutputFileName(outputFileNameTextField.getText());
+        // outputDocumentTextField.setText(model.getOutputFilePath());
+        OutputFileNameCommand command = new OutputFileNameCommand(outputFileNameTextField.getText());
+        invoker.invoke(command);
+
     }
 
     @FXML
@@ -292,62 +343,58 @@ public class PrimaryController {
      * Use a FileChooser dialogue to select the source PDF file.
      * @return true if a file is selected, false otherwise.
      */
-    private boolean openFile() {
+    private void openFile() {
+        // Set up the file chooser.
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open PDF Document File");
 
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
 
-        if (model.isSourceFilePath()) {
-            File current = new File(model.getSourceFilePath());
+        if (model.isSourceDocument()) {
+            File current = new File(model.getSourceDocument());
             if (current.exists()) {
                 fileChooser.setInitialDirectory(new File(current.getParent()));
                 fileChooser.setInitialFileName(current.getName());
             }
         }
 
+        // Use the file chosser.
         File file = fileChooser.showOpenDialog(model.getStage());
         if (file != null) {
-            model.setSourceFilePath(file.getAbsolutePath());
-            syncUI();
-
-            return true;
+            // model.setSourceFilePath(file.getAbsolutePath());
+            // syncUI();
+            SourceDocumentCommand command = new SourceDocumentCommand(file.getAbsolutePath());
+            invoker.invoke(command);
         }
-
-        return false;
     }
 
-    private boolean saveAs() {
+    private void saveAs() {
+        // Set up the file chooser.
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save PDF Document File");
 
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
 
-        if (model.isOutputFilePath()) {
-            File current = new File(model.getOutputFilePath());
-            fileChooser.setInitialFileName(current.getName());
+        if (model.isOutputFileParent()) {
+            fileChooser.setInitialFileName(model.getFullOutputFileName());
 
-            File parent = new File(current.getParent());
-            if (parent.exists())
+            File parent = new File(model.getOutputFileParent());
+            if (parent.exists()) {
                 fileChooser.setInitialDirectory(parent);
+            }
         }
-        else
-        if (model.isSourceFilePath()) {
-            File current = new File(model.getSourceFilePath());
-            File parent = new File(current.getParent());
-            if (parent.exists())
-                fileChooser.setInitialDirectory(parent);
-        }
+
+        // Use the file chosser.
         File file = fileChooser.showSaveDialog(model.getStage());
         if (file != null) {
-            model.setOutputFilePath(file.getAbsolutePath());
-            outputFileNameTextField.setText(model.getOutputFileName());
-            outputDocumentTextField.setText(model.getOutputFilePath());
+            // model.setOutputDocument(file.getAbsolutePath());
+            // syncOutputFileNameTextField();
+            // syncOutputDocumentTextField();
 
-            return model.generate();
+            // fileSaved(model.generate());
+            OutputDocumentCommand command = new OutputDocumentCommand(file.getAbsolutePath());
+            invoker.invoke(command);
         }
-
-        return false;
     }
 
 
@@ -387,16 +434,18 @@ public class PrimaryController {
 
     @FXML
     private void rotateCheckBoxActionPerformed(ActionEvent event) {
-        model.setRotateCheck(rotateCheckBox.isSelected());
+        // model.setRotateCheck(rotateCheckBox.isSelected());
+        RotateCommand command = new RotateCommand(rotateCheckBox.isSelected());
+        invoker.invoke(command);
     }
 
     @FXML
     private void generateButtonActionPerformed(ActionEvent event) {
         final boolean success = model.generate();
         if (success)
-            setStatusMessage("Generated: " + model.getOutputFilePath());
+            setStatusMessage("Generated: " + model.getOutputDocument());
         else
-            setStatusMessage("Failed to generate: " + model.getOutputFilePath());
+            setStatusMessage("Failed to generate: " + model.getOutputDocument());
     }
 
 
@@ -404,11 +453,11 @@ public class PrimaryController {
         countLabel.setText(String.valueOf(model.getOutputPageCount()));
     }
 
-    private void syncFirstPageSpinner() {
+    public void syncFirstPageSpinner() {
         firstPageSpinner.setValueFactory(model.getFirstPageSVF());
     }
 
-    private void syncLastPageSpinner() {
+    public void syncLastPageSpinner() {
         lastPageSpinner.setValueFactory(model.getLastPageSVF());
     }
 
@@ -419,7 +468,10 @@ public class PrimaryController {
         paperSizeChoiceBox.setItems(model.getPaperSizeList());
 
         paperSizeChoiceBox.getSelectionModel().selectedItemProperty().addListener( (v, oldValue, newValue) -> {
-            model.setPaperSize(newValue);
+            Debug.trace(DD, "paperSizeChoiceBox.Listener(" + newValue + "))");
+            // model.setPaperSize(newValue);
+            PaperSizeCommand command = new PaperSizeCommand(oldValue, newValue);
+            invoker.invoke(command);
         });
 
 
@@ -427,20 +479,24 @@ public class PrimaryController {
         firstPageSpinner.getValueFactory().wrapAroundProperty().set(false);
         
         firstPageSpinner.valueProperty().addListener( (v, oldValue, newValue) -> {
-            Debug.trace(DD, "intSpinner.Listener(" + newValue + "))");
-            model.syncFirstPage();
-            syncLastPageSpinner();
-            syncUI();
+            Debug.trace(DD, "firstPageSpinner.Listener(" + newValue + "))");
+            // model.syncFirstPage();
+            // syncLastPageSpinner();
+            // syncUI();
+            FirstPageCommand command = new FirstPageCommand(oldValue, newValue);
+            invoker.invoke(command);
         });
 
         syncLastPageSpinner();
         lastPageSpinner.getValueFactory().wrapAroundProperty().set(false);
         
         lastPageSpinner.valueProperty().addListener( (v, oldValue, newValue) -> {
-            Debug.trace(DD, "doubleSpinner.Listener(" + newValue + "))");
-            model.syncLastPage();
-            syncFirstPageSpinner();
-            syncUI();
+            Debug.trace(DD, "lastPageSpinner.Listener(" + newValue + "))");
+            // model.syncLastPage();
+            // syncFirstPageSpinner();
+            // syncUI();
+            LastPageCommand command = new LastPageCommand(oldValue, newValue);
+            invoker.invoke(command);
         });
         
         paperSizeChoiceBox.setTooltip(new Tooltip("Paper size of the generated PDF document"));
@@ -504,8 +560,10 @@ public class PrimaryController {
         
         sigSizeSpinner.valueProperty().addListener( (v, oldValue, newValue) -> {
             Debug.trace(DD, "sigSizeSpinner.Listener(" + newValue + "))");
-            model.syncSigSize();
-            syncUI();
+            // model.syncSigSize();
+            // syncUI();
+            SignatureSizeCommand command = new SignatureSizeCommand(oldValue, newValue);
+            invoker.invoke(command);
         });
     }
 

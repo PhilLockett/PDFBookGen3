@@ -96,12 +96,22 @@ public class PDFBook {
      * @param inPDF file path for source PDF.
      */
     static public int getPDFPageCount(String inPDF) {
+        Debug.trace(DD, "getPDFPageCount(" + inPDF + ")");
 
         PDDocument inputDoc;
         int maxPage = 0;
 
         try {
-            inputDoc = PDDocument.load(new File(inPDF));
+            File file = new File(inPDF);
+            if (file.exists() == false) {
+                return maxPage;
+            }
+
+            if (file.isFile() == false) {
+                return maxPage;
+            }
+
+            inputDoc = PDDocument.load(file);
             maxPage = inputDoc.getNumberOfPages();
 
             if (inputDoc != null) {
@@ -122,6 +132,7 @@ public class PDFBook {
      * @param outPDF file path for generated PDF.
      */
     public PDFBook(String inPDF, String outPDF) {
+        Debug.trace(DD, "PDFBook(" + inPDF + ", " + outPDF + ")");
         sourcePDF = inPDF;
         outputPDF = outPDF;
 
