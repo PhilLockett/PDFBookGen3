@@ -46,12 +46,21 @@ public class Invoker {
     private Invoker() {
     }
 
+    /**
+     * @param command passed in.
+     * @return true if new command is triggered by a handler after an undo, 
+     * false otherwise. 
+     */
     private boolean isHandlerCausingARevert(Command command) {
         if (redoStack.isEmpty()) {
             return false;
         }
 
         return redoStack.peek().isReverting(command);
+    }
+
+    private boolean isNewCommandUnchanging(Command command) {
+        return !command.isChanging();
     }
 
     private boolean isNoCurrentCommand() {
@@ -80,15 +89,21 @@ public class Invoker {
     public void invoke(Command command) {
         Debug.trace(DD, "invoke(" + command + ")");
 
-        // If new command is triggered by a handler after an undo, silently 
-        // drop it.
-        if (isHandlerCausingARevert(command)) {
-            Debug.info(DD, "Dropped ");
+        // If 'new' command does not change the value, silently drop it.
+        if (isNewCommandUnchanging(command)) {
+            Debug.info(DD, "Dropped unchanged");
 
             return;
         }
 
-        // No current command, so just excute and stack it.
+        // If 'new' command is a handler revert, silently drop it.
+        if (isHandlerCausingARevert(command)) {
+            Debug.info(DD, "Dropped revert");
+
+            return;
+        }
+
+        // No 'current' command, so just excute and stack it.
         if (isNoCurrentCommand()) {
             command.execute();
 
@@ -100,7 +115,7 @@ public class Invoker {
             return;
         }
 
-        // If this is a successful update to the current command, execute it.
+        // If this is a successful update to the 'current' command, execute it.
         if (isACurrentCommandUpdate(command)) {
             command.execute();
 
@@ -111,7 +126,7 @@ public class Invoker {
             return;
         }
 
-        // If current command has been changed back to original value, 
+        // If 'current' command has been changed back to original value, 
         // silently drop it.
         if (isCurrentCommandChanging() == false) {
             Command dropped = undoStack.pop();
@@ -122,14 +137,10 @@ public class Invoker {
         // Handle the new command.
         command.execute();
 
-        // Filter out ComboBoxActionPerformed handler triggering when 
-        // setValue() is called i.e. silently drop unchange commands.
-        if (command.isChanging()) {
-            undoStack.push(command);
-            Debug.info(DD, "Pushed ");
-            
-            redoStack.clear();
-        }
+        undoStack.push(command);
+        Debug.info(DD, "Pushed ");
+        
+        redoStack.clear();
 
     }
 
