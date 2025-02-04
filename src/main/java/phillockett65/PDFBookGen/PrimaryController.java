@@ -284,9 +284,7 @@ public class PrimaryController {
 
     @FXML
     private void helpUserGuideOnAction() {
-        final String title = model.getTitle();
-
-        HelpControl.showControl(title + " User Guide");
+        model.showUserGuide();
     }
 
     /**

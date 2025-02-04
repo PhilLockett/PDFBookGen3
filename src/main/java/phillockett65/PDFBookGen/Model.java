@@ -28,6 +28,7 @@ import java.io.File;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -191,11 +192,24 @@ public class Model {
         stage.close();
     }
 
+    public void showUserGuide() {
+        final String title = getTitle() + " User Guide";
+
+        Point2D pos = HelpControl.showControl(title, data.helpX, data.helpY);
+
+        data.helpX = pos.getX();
+        data.helpY = pos.getY();
+    }
+
+
     /**
      * Set all attributes to the default values.
      */
     public void defaultSettings() {
         data = new DataStore();
+
+        data.helpX = HelpControl.ERRPOS;
+        data.helpY = HelpControl.ERRPOS;
 
         data.sourceDocument = "";
         data.outputFileName = "booklet";

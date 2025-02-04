@@ -41,6 +41,8 @@ public class DataStore implements Serializable {
 
     public Double mainX;
     public Double mainY;
+    public Double helpX;
+    public Double helpY;
 
     public String sourceDocument;
     public String outputFileName;
@@ -125,8 +127,8 @@ public class DataStore implements Serializable {
      */
     public void dump() {
         Debug.info(DD, "");
-        Debug.info(DD, "mainX = " + mainX);
-        Debug.info(DD, "mainY = " + mainY);
+        Debug.info(DD, "main position (" + mainX + ", " + mainY + ")");
+        Debug.info(DD, "help position (" + helpX + ", " + helpY + ")");
         Debug.info(DD, "");
         Debug.info(DD, "sourceDocument = " + sourceDocument);
         Debug.info(DD, "outputFileName = " + outputFileName);

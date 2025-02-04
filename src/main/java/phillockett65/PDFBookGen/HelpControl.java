@@ -24,6 +24,7 @@
 package phillockett65.PDFBookGen;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -67,8 +68,7 @@ public class HelpControl extends Stage {
     private double x = 0.0;
     private double y = 0.0;
 
-    private boolean result = false;
-
+    private Point2D pos;
 
 
     /************************************************************************
@@ -172,30 +172,29 @@ public class HelpControl extends Stage {
         new H2Flow(new H2("Usage")),
         new H3Flow(new H3("“File Names” Pane")),
         new PFlow(
-            new P("To select a source PDF document either click on the “Load...” button or use the pull-down menu option “File -> Load...” which will launch a standard file chooser dialogue window. "),
+            new P("To select a source PDF document either click on the “Load...” button or use the pull-down menu option “File / Load...” which will launch a standard file chooser dialogue window. "),
             new P("The read-only “Source Document” text field displays the document selected. ")
             ),
         new PFlow(
-            new P("The editable “Output File Name” text field allows for the output file need to be specified. "),
+            new P("The editable “Output File Name” text field allows for the output file name to be specified. "),
             new P("This will automatically have the “.pdf” extension added and, by default, uses the same directory as the Source document. "),
             new P("The read-only “Generate Document” text field displays the full output document file path. "),
             new P("Clicking the “Generate” button at the bottom of the window will generate the output document using the options selected. "),
-            new P(""),
-            new P("Alternatively use the pull-down menu option “File -> Generate Booklet”. ")
+            new P("Alternatively use the pull-down menu option “File / Generate Booklet”. ")
             ),
         new PFlow(
-            new P("If a different output directory is needed, use the pull-down menu option “File -> Generate Booklet As...” which will launch a standard file save dialogue window. ")
+            new P("If a different output directory is desired, use the pull-down menu option “File / Generate Booklet As...” which will launch a standard file save dialogue window. ")
             ),
         new H3Flow(new H3("“Output Content” Pane")),
         new PFlow(
             new P("The “Output Paper Size” selector allows the paper size of the output document to be selected. ")
             ),
         new PFlow(
-            new P("The “First Page” and “Last Page” spinners allow for sub-sections of the source document to be selected if the whole document is not required. "),
-            new P("The “Total page count” is calculated from these spinners. ")
+            new P("The “First Page” and “Last Page” spinners allow a sub-section of the source document to be selected if the whole document is not required. "),
+            new P("The “Total Page Count” is calculated from these spinners. ")
             ),
         new PFlow(
-            new P("Typically the two pages on the reverse side of the sheet need to be rotated relative to those on the front if the output document is being displayed on a full-duplex printer. "),
+            new P("Typically the two pages on the reverse side of the sheet need to be rotated relative to those on the front if the output document is being printed on a full-duplex printer. "),
             new P("However, if printing a test sheet shows that the inner 2 pages are up-side-down relative to the outer 2 pages, then this setting needs to be changed. ")
             ),
         new H3Flow(new H3("“Signature State” Pane")),
@@ -255,7 +254,7 @@ public class HelpControl extends Stage {
 
         Pane cancel = Model.buildCancelButton();
         cancel.setOnMouseClicked(event -> {
-            result = false;
+            pos = new Point2D(this.getX(), this.getY());
             this.close();
         });
 
@@ -283,7 +282,7 @@ public class HelpControl extends Stage {
         cancel.setMnemonicParsing(false);
     
         cancel.setOnAction(event -> {
-            result = false;
+            pos = new Point2D(this.getX(), this.getY());
             this.close();
         });
 
@@ -333,11 +332,16 @@ public class HelpControl extends Stage {
     /**
      * Initialize the control.
      */
-    private void init(String title) {
+    private void init(String title, double posX, double posY) {
         this.setTitle(title);
         this.resizableProperty().setValue(false);
         this.initStyle(StageStyle.UNDECORATED);
         this.initModality(Modality.APPLICATION_MODAL);
+
+        if ((posX != ERRPOS) && (posY != ERRPOS)) {
+            this.setX(posX);
+            this.setY(posY);
+        }
 
         root = new VBox();
 
@@ -363,18 +367,19 @@ public class HelpControl extends Stage {
         super();
     }
 
+    public static final double ERRPOS = -200.0;
 
     /**
      * Construct and launch the User Guide and wait for user input.
      * @return false when cancelled.
      */
-    public static boolean showControl(String title) {
+    public static Point2D showControl(String title, double posX, double posY) {
         HelpControl control = new HelpControl();
 
-        control.init(title);
+        control.init(title, posX, posY);
         control.showAndWait();
 
-        return control.result;
+        return control.pos;
     }
 
 }
