@@ -29,8 +29,8 @@ favourite IDE to be JavaFX compatible, however, Maven does not require this.
 ## Cloning and Running
 The following commands clone and execute the code:
 
-	git clone https://github.com/PhilLockett/PDFBookGen.git
-	cd PDFBookGen/
+	git clone https://github.com/PhilLockett/PDFBookGen3.git
+	cd PDFBookGen3/
 	mvn clean javafx:run
 
 ## Bookbinding
@@ -41,25 +41,8 @@ terms and techniques refer to:
  * [Bindings](https://www.studentbookbinding.co.uk/blog/how-to-set-up-pagination-section-sewn-bindings)
 
 
-## Implementation Summary
-A booklet has two pages arranged side-by-side on both sides of a sheet of 
-paper such that the sheet can be folded to produce a booklet.
-
-For a "Signature Size" of "1 sheet" the document is processed in groups of 4 
-pages for each sheet of paper. 
-The 4th page is rotated anti-clockwise and scaled to fit on the bottom half of 
-one side of the sheet. 
-The 1st page is rotated anti-clockwise and scaled to fit on the top half of the 
-same side of the sheet. 
-On the reverse side, the 2nd page is rotated clockwise and scaled to fit on the 
-top half and the 3rd page is rotated clockwise and scaled to fit on the bottom 
-half. 
-This process is repeated for all groups of 4 pages in the source document.
-
-For a "Signature Size" of more than 1 sheet, more pages are grouped in 
-multiples of 4 and arranged in a similar, but more complex manner.
-The "Signature Size" specifies the number of folded sheets of paper to nest 
-for each signature.
+## User Guide
+An embedded User Guide is accessible via the pull-down menu (or ctrl+F1).
 
 ## Customization
 The GUI layout can be modified as desired by editing the 'primary.fxml' file. 
@@ -72,12 +55,13 @@ To change the colours and fonts used, edit the 'application.css' file.
 ## Points of interest
 This code has the following points of interest:
 
-  * PDFBookGen is a Maven project that uses JavaFX.
-  * PDFBookGen is styled with CSS.
-  * PDFBookGen is structured as an MVC project (FXML being the Video component).
+  * PDFBookGen3 is a Maven project that uses JavaFX.
+  * PDFBookGen3 is styled with CSS.
+  * PDFBookGen3 is structured as an MVC project (FXML being the Video component).
   * Multi stage initialization minimizes the need for null checks. 
   * Data persistence is provided by the Serializable DataStore object.
   * The GUI is implemented in FXML using SceneBuilder.
   * PDFBookGen3 is an improved version of [PDFBookGen](https://github.com/PhilLockett/PDFBookGen).
-  * A static Debug object helps control diagnostic output.
+  * A `static` Debug object helps control diagnostic output.
   * The Command Pattern is used to support an Undo/Redo mechanism.
+  * PDFBookGen3 contains an embedded User Guide.
