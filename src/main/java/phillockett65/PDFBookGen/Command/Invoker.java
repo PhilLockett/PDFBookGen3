@@ -160,18 +160,17 @@ public class Invoker {
         if (isACurrentCommandUpdate()) {
             executeNewCommand();
 
-            final Command current = undoStack.peek();
-            Debug.info(DD, "Updated and " + (current.isChanging() ? "different" : "SAME") + " ");
+            // If 'current' command has been changed back to original value, 
+            // silently drop it from the undo stack.
+            if (isCurrentCommandUnchanging()) {
+                Command dropped = undoStack.pop();
+                Debug.info(DD, "Dropping updated and unchanged current command ");
+                Debug.info(DD, dropped.toString());
+            } else {
+                Debug.info(DD, "Updated and different ");
+            }
 
             return;
-        }
-
-        // If 'current' command has been changed back to original value, 
-        // silently drop it before we handle the 'new' command.
-        if (isCurrentCommandUnchanging()) {
-            Command dropped = undoStack.pop();
-            Debug.info(DD, "Dropping unchange current command ");
-            Debug.info(DD, dropped.toString());
         }
 
         // Handle the new command.
@@ -186,7 +185,7 @@ public class Invoker {
      */
     public void undo() {
         Debug.trace(DD, "undo received " + undoStack.size());
-        if (undoStack.isEmpty()) {
+        if (isNoCurrentCommand()) {
             return;
         }
 
