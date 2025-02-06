@@ -51,7 +51,7 @@ public class App extends Application {
         controller = fxmlLoader.getController();
 
         ObservableList<Image> icons = stage.getIcons();
-        icons.add(new Image(getClass().getResourceAsStream("pdf.jpg")));
+        icons.add(new Image(getClass().getResourceAsStream("pdf.png")));
 
         stage.setTitle("PDF Booklet Generator 3.0");
         stage.setOnCloseRequest(e -> Platform.exit());

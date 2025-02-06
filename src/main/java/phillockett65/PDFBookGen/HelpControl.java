@@ -242,7 +242,7 @@ public class HelpControl extends Stage {
             this.setY(mouseEvent.getScreenY() - y);
         });
 
-        Image image = new Image(getClass().getResourceAsStream("pdf.jpg"));
+        Image image = new Image(getClass().getResourceAsStream("pdf.png"));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(28);
         imageView.setFitWidth(28);
