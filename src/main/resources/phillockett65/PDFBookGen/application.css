@@ -1,24 +1,26 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
 .root{
+    -main-fore-col: #e8e8e8;
     -fx-background-color: #303030;
     -fx-border-color: white;
+    -button-color: linear-gradient(to bottom, #BB6662, #7B2622);
+    -button-color-hi: linear-gradient(to bottom, #BB6662, #9B4642);
+    -button-color-lo: linear-gradient(to bottom, #9B4642, #7B2622);
 }
 
 .top-bar{
     -fx-background-color: linear-gradient(to bottom, #505050, #303030);
 }
-
 .top-bar:hover{
     -fx-background-color: linear-gradient(to bottom, #606060, #404040);
+}
+.unfocussed-bar{
+    -fx-background-color: linear-gradient(to bottom, #404040, #202020);
 }
 
 .unfocussed-root{
     -fx-border-color: grey;
-}
-
-.unfocussed-bar{
-    -fx-background-color: linear-gradient(to bottom, #404040, #202020);
 }
 
 .top-bar-icon{
@@ -31,12 +33,12 @@
 
 .top-bar, .heading{
     -fx-font-size: 15;
-    -fx-text-fill: #e8e8e8;
+    -fx-text-fill: -main-fore-col;
     -fx-font-weight: bold;
 }
 
 .label, .check-box, .radio-button{
-    -fx-text-fill: #e8e8e8;
+    -fx-text-fill: -main-fore-col;
 }
 
 .titled-pane{
@@ -53,111 +55,65 @@
     -fx-font-style: italic;
     -fx-font-weight: normal;
     -fx-text-fill: black;
-    -fx-background-color: #e8e8e8;
+    -fx-background-color: -main-fore-col;
 }
 .text-field:readonly{
     -fx-text-fill: black;
     -fx-font-weight: bold;
-    -fx-background-color: #d0d0d0;
-}
-.combo-box{
-    -fx-font-weight: bold;
-    -fx-background-color: #e8e8e8;
+    -fx-background-color: #D0D0D0;
 }
 .text-field{
     -fx-text-fill: #404040;
     -fx-font-weight: bold;
-    -fx-background-color: #e8e8e8;
+    -fx-background-color: -main-fore-col;
 }
-.text-area{
-    -fx-text-fill: #e8e8e8;
-}
+
 .content{
     -fx-background-color: #080808;
-	-fx-border-color: #c0B0B0;
+	-fx-border-color: #B0B0B0;
 	-fx-border-insets: 1;
 }
 .spinner{
     -fx-background-color: #282828;
 }
 
-.choice-box, .color-picker, .button{
-    -fx-background-color: linear-gradient(to bottom, #BB6662, #7B2622);
-    -fx-text-fill: #e8e8e8;
+.combo-box{
+    -fx-font-weight: bold;
+    -fx-background-color: -main-fore-col;
+}
+.choice-box, .button{
+    -fx-background-color: -button-color;
+    -fx-text-fill: -main-fore-col;
     -fx-font-weight: bold;
 }
-.toggle-button:selected{
-    -fx-background-color: green;
-    -fx-text-fill: #e8e8e8;
-    -fx-font-weight: bold;
-}
-.toggle-button{
-    -fx-background-color: red;
-    -fx-text-fill: #e8e8e8;
-    -fx-font-weight: bold;
-    -fx-background-radius: 12;
-}
-.context-menu, .menu-item:focused{
-    -fx-background-color: #81423F;
-    -fx-text-fill: #e8e8e8;
-    -fx-font-weight: bold;
-}
+
 .menu-bar{
     -fx-background-color: transparent;
-    -fx-text-fill: #e8e8e8;
+    -fx-text-fill: -main-fore-col;
     -fx-font-weight: bold;
 }
-.menu-button:hover, .menu-button:showing, .menu-item:hover{
+.menu-button:hover, .menu-button:showing, .menu-item:hover, .menu-item:focused{
     -fx-background-color: #7B2622;
-    -fx-text-fill: #e8e8e8;
+    -fx-text-fill: -main-fore-col;
+    -fx-font-weight: bold;
+}
+.context-menu{
+    -fx-background-color: #81423F;
+    -fx-text-fill: -main-fore-col;
     -fx-font-weight: bold;
 }
 
 .increment-arrow-button{
-    -fx-background-color: linear-gradient(to bottom, #BB6662, #9B4642);
+    -fx-background-color: -button-color-hi;
 }
 .decrement-arrow-button{
-    -fx-background-color: linear-gradient(to bottom, #9B4642, #7B2622);
+    -fx-background-color: -button-color-lo;
 }
 .increment-arrow, .decrement-arrow, .arrow{
     -fx-background-color: white;
 }
 
 .scroll-bar .thumb {
-    -fx-background-color: #9B4642;
+    -fx-background-color: #7B2622;
 }
 
-.imageButton{
-    -fx-background-color: null;
-    -fx-text-fill: null;
-}
-
-.progress-bar{
-    -fx-accent: #81423F;
-}
-
-.table-view{
-    -fx-background-color: black;
-    -fx-font-weight: bold;
-}
-.column-header, .filler{
-    -fx-background-color: #81423F;
-    -fx-font-weight: bold;
-}
-/*
-.list-cell{
-    -fx-font-weight: bold;
-}
-
-.list-cell:selected{
-    -fx-text-fill: black;
-    -fx-background-color: #81423F;
-    -fx-accent: #81423F;
-}
-.list-cell:even{
-    -fx-background-color: #f8f8f8;
-}
-.list-cell:odd{
-    -fx-background-color: #e8e8e8;
-}
-*/
