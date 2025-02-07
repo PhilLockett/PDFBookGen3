@@ -113,7 +113,10 @@
     -fx-background-color: white;
 }
 
-.scroll-bar .thumb {
+.scroll-bar .thumb{
     -fx-background-color: #7B2622;
+}
+.scroll-bar .track, .scroll-bar .increment-button, .scroll-bar .decrement-button{
+    -fx-background-color: #BB6662;
 }
 
