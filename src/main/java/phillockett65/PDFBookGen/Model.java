@@ -572,6 +572,11 @@ public class Model {
     public int getOutputPageCount() { return signature.getOutputPageCount(); }
 
     /**
+     * @return the number of sheets of paper needed for the generated document.
+     */
+    public int getOutputSheetCount() { return signature.getOutputSheetCount(); }
+
+    /**
      * @return the number of source pages in a signature.
      */
     public int getSigPageCount() { return signature.getSigPageCount(); }

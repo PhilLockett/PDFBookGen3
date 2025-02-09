@@ -27,6 +27,7 @@
  * 
  * Available calculated values are:
  *   o Number of source pages in the generated document
+ *   o Number of sheets of paper needed for the generated document
  *   o Number of source pages in a signature
  *   o Number of signatures that will be generated
  *   o Source page number that the last signature starts with
@@ -37,6 +38,7 @@ package phillockett65.PDFBookGen;
 
 public class Signature {
     private final int pageCount;
+    private final int sheetCount;
     private final int sigPageCount;
     private final int sigCount;
     private final int lastSigFirstPage;
@@ -53,6 +55,7 @@ public class Signature {
     {
         final int pageDiff = lastPage - firstPage;
         pageCount = pageDiff + 1;
+        sheetCount = ((pageCount-1) / 4) + 1;
         sigPageCount = sigSize * 4;
         final int fullSigCount = pageDiff / sigPageCount;
         final int fullSigPageCount = fullSigCount * sigPageCount;
@@ -66,6 +69,11 @@ public class Signature {
      * @return the number of source pages in the generated document.
      */
     public int getOutputPageCount() { return pageCount; }
+
+    /**
+     * @return the number of sheets of paper needed for the generated document.
+     */
+    public int getOutputSheetCount() { return sheetCount; }
 
     /**
      * @return the number of source pages in a signature.

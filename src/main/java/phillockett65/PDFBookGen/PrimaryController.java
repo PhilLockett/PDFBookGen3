@@ -182,6 +182,7 @@ public class PrimaryController {
         syncSigSizeSpinner();
 
         setTotalPageCountMessage();
+        setOutputSheetCountMessage();
         setSignatureStateMessages();
     }
 
@@ -436,6 +437,9 @@ public class PrimaryController {
     private Label countLabel;
 
     @FXML
+    private Label sheetLabel;
+
+    @FXML
     private Button generateButton;
 
     @FXML
@@ -457,6 +461,10 @@ public class PrimaryController {
 
     private void setTotalPageCountMessage() {
         countLabel.setText(String.valueOf(model.getOutputPageCount()));
+    }
+
+    private void setOutputSheetCountMessage() {
+        sheetLabel.setText(String.valueOf(model.getOutputSheetCount()));
     }
 
     public void syncFirstPageSpinner() {
@@ -510,6 +518,7 @@ public class PrimaryController {
         firstPageSpinner.setTooltip(new Tooltip("First page of source document to include in the generated document"));
         lastPageSpinner.setTooltip(new Tooltip("Last page of source document to include in the generated document"));
         countLabel.setTooltip(new Tooltip("Number of pages from the source document that will be included in the generated document"));
+        sheetLabel.setTooltip(new Tooltip("Number of sheets of paper needed for the generated document"));
         generateButton.setTooltip(new Tooltip("Generate the PDF document in booklet form"));
     }
 

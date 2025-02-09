@@ -135,10 +135,16 @@
                         <Label text="Last Page:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
                         <Spinner fx:id="firstPageSpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Spinner fx:id="lastPageSpinner" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="Total Page Count:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
+                        <Label text="Source Document Page Count:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                         <Label text="Output Paper Size:" GridPane.halignment="RIGHT" />
                         <ChoiceBox fx:id="paperSizeChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" />
-                        <Label fx:id="countLabel" text="PageCount" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
+                        <Label fx:id="countLabel" text="countLabel" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label text="Generated Document Sheet Count:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                        <Label fx:id="sheetLabel" text="sheetLabel" GridPane.columnIndex="3" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
@@ -164,13 +170,13 @@
                      <children>
                         <Label prefHeight="17.0" prefWidth="82.0" text="Signature Size:" GridPane.halignment="RIGHT" />
                         <Label text="Pages per Signature:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-                        <Label fx:id="sigLabel" text="PagePerSig" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="sigLabel" text="sigLabel" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
                         <Label text="Signature Count:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                        <Label fx:id="sigCountLabel" text="SigCount" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label fx:id="sigCountLabel" text="sigCountLabel" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
@@ -178,17 +184,17 @@
                         <Label text="Last Signature begins at page:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
                         <Label text="Last Signature page count:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                         <Label text="Last Signature blank pages:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                        <Label fx:id="lastSigBeginLabel" text="LastSigPage" GridPane.columnIndex="3">
+                        <Label fx:id="lastSigBeginLabel" text="lastSigBeginLabel" GridPane.columnIndex="3">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <Label fx:id="lastSigCountLabel" text="LastSigPages" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <Label fx:id="lastSigCountLabel" text="lastSigCountLabel" GridPane.columnIndex="3" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <Label fx:id="lastSigBlanksLabel" text="LastSigBlanks" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                        <Label fx:id="lastSigBlanksLabel" text="lastSigBlanksLabel" GridPane.columnIndex="3" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
