@@ -333,8 +333,7 @@ public class PrimaryController {
     @FXML
     private void outputFileNameTextFieldKeyTyped(KeyEvent event) {
         Debug.trace(DD, "outputFileNameTextFieldKeyTyped() " + outputFileNameTextField.getText());
-        // model.setOutputFileName(outputFileNameTextField.getText());
-        // outputDocumentTextField.setText(model.getOutputFilePath());
+
         OutputFileNameCommand command = new OutputFileNameCommand(outputFileNameTextField.getText());
         invoker.invoke(command);
 
@@ -368,8 +367,6 @@ public class PrimaryController {
         // Use the file chosser.
         File file = fileChooser.showOpenDialog(model.getStage());
         if (file != null) {
-            // model.setSourceFilePath(file.getAbsolutePath());
-            // syncUI();
             SourceDocumentCommand command = new SourceDocumentCommand(file.getAbsolutePath());
             invoker.invoke(command);
         }
@@ -394,11 +391,6 @@ public class PrimaryController {
         // Use the file chosser.
         File file = fileChooser.showSaveDialog(model.getStage());
         if (file != null) {
-            // model.setOutputDocument(file.getAbsolutePath());
-            // syncOutputFileNameTextField();
-            // syncOutputDocumentTextField();
-
-            // fileSaved(model.generate());
             OutputDocumentCommand command = new OutputDocumentCommand(file.getAbsolutePath());
             invoker.invoke(command);
         }
@@ -444,7 +436,6 @@ public class PrimaryController {
 
     @FXML
     private void rotateCheckBoxActionPerformed(ActionEvent event) {
-        // model.setRotateCheck(rotateCheckBox.isSelected());
         RotateCommand command = new RotateCommand(rotateCheckBox.isSelected());
         invoker.invoke(command);
     }
@@ -483,7 +474,7 @@ public class PrimaryController {
 
         paperSizeChoiceBox.getSelectionModel().selectedItemProperty().addListener( (v, oldValue, newValue) -> {
             Debug.trace(DD, "paperSizeChoiceBox.Listener(" + newValue + "))");
-            // model.setPaperSize(newValue);
+
             PaperSizeCommand command = new PaperSizeCommand(oldValue, newValue);
             invoker.invoke(command);
         });
@@ -494,9 +485,7 @@ public class PrimaryController {
         
         firstPageSpinner.valueProperty().addListener( (v, oldValue, newValue) -> {
             Debug.trace(DD, "firstPageSpinner.Listener(" + newValue + "))");
-            // model.syncFirstPage();
-            // syncLastPageSpinner();
-            // syncUI();
+
             FirstPageCommand command = new FirstPageCommand(oldValue, newValue);
             invoker.invoke(command);
         });
@@ -506,9 +495,7 @@ public class PrimaryController {
         
         lastPageSpinner.valueProperty().addListener( (v, oldValue, newValue) -> {
             Debug.trace(DD, "lastPageSpinner.Listener(" + newValue + "))");
-            // model.syncLastPage();
-            // syncFirstPageSpinner();
-            // syncUI();
+
             LastPageCommand command = new LastPageCommand(oldValue, newValue);
             invoker.invoke(command);
         });
@@ -575,8 +562,7 @@ public class PrimaryController {
         
         sigSizeSpinner.valueProperty().addListener( (v, oldValue, newValue) -> {
             Debug.trace(DD, "sigSizeSpinner.Listener(" + newValue + "))");
-            // model.syncSigSize();
-            // syncUI();
+
             SignatureSizeCommand command = new SignatureSizeCommand(oldValue, newValue);
             invoker.invoke(command);
         });
