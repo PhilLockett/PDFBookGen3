@@ -1,0 +1,122 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.root{
+    -main-fore-col: #e8e8e8;
+    -fx-background-color: #303030;
+    -fx-border-color: white;
+    -button-color: linear-gradient(to bottom, #BB6662, #7B2622);
+    -button-color-hi: linear-gradient(to bottom, #BB6662, #9B4642);
+    -button-color-lo: linear-gradient(to bottom, #9B4642, #7B2622);
+}
+
+.top-bar{
+    -fx-background-color: linear-gradient(to bottom, #505050, #303030);
+}
+.top-bar:hover{
+    -fx-background-color: linear-gradient(to bottom, #606060, #404040);
+}
+.unfocussed-bar{
+    -fx-background-color: linear-gradient(to bottom, #404040, #202020);
+}
+
+.unfocussed-root{
+    -fx-border-color: grey;
+}
+
+.top-bar-icon{
+    -fx-stroke: white;
+}
+
+.top-bar-icon:hover{
+    -fx-background-color: red;
+}
+
+.top-bar, .heading{
+    -fx-font-size: 15;
+    -fx-text-fill: -main-fore-col;
+    -fx-font-weight: bold;
+}
+
+.label, .check-box, .radio-button{
+    -fx-text-fill: -main-fore-col;
+}
+
+.titled-pane{
+    -fx-text-fill: white;
+}
+.title{
+    -fx-background-color: transparent;
+    -fx-font-size: 14.5;
+    -fx-font-weight: bold;
+}
+
+.tooltip{
+    -fx-font-size: 14;
+    -fx-font-style: italic;
+    -fx-font-weight: normal;
+    -fx-text-fill: black;
+    -fx-background-color: -main-fore-col;
+}
+.text-field:readonly{
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-color: #D0D0D0;
+}
+.text-field{
+    -fx-text-fill: #404040;
+    -fx-font-weight: bold;
+    -fx-background-color: -main-fore-col;
+}
+
+.content{
+    -fx-background-color: #080808;
+	-fx-border-color: #B0B0B0;
+	-fx-border-insets: 1;
+}
+.spinner{
+    -fx-background-color: #282828;
+}
+
+.combo-box{
+    -fx-font-weight: bold;
+    -fx-background-color: -main-fore-col;
+}
+.choice-box, .button{
+    -fx-background-color: -button-color;
+    -fx-text-fill: -main-fore-col;
+    -fx-font-weight: bold;
+}
+
+.menu-bar{
+    -fx-background-color: transparent;
+    -fx-text-fill: -main-fore-col;
+    -fx-font-weight: bold;
+}
+.menu-button:hover, .menu-button:showing, .menu-item:hover, .menu-item:focused{
+    -fx-background-color: #7B2622;
+    -fx-text-fill: -main-fore-col;
+    -fx-font-weight: bold;
+}
+.context-menu{
+    -fx-background-color: #81423F;
+    -fx-text-fill: -main-fore-col;
+    -fx-font-weight: bold;
+}
+
+.increment-arrow-button{
+    -fx-background-color: -button-color-hi;
+}
+.decrement-arrow-button{
+    -fx-background-color: -button-color-lo;
+}
+.increment-arrow, .decrement-arrow, .arrow{
+    -fx-background-color: white;
+}
+
+.scroll-bar .thumb{
+    -fx-background-color: #7B2622;
+}
+.scroll-bar .track, .scroll-bar .increment-button, .scroll-bar .decrement-button{
+    -fx-background-color: #BB6662;
+}
+

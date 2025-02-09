@@ -51,6 +51,11 @@ The SceneBuilder application makes editing the layout easier than modifiying
 
 FXML also uses cascading style sheets for the presentation. 
 To change the colours and fonts used, edit the 'application.css' file.
+Two additional style sheets are provided: 'applicationBlue.css' and 
+'applicationDark.css'.
+The sheet 'applicationBlue.css' is an alternate colour scheme, whereas 
+'applicationDark.css' is identical to 'application.css'.
+Copy either file onto 'application.css' to use them or create your own.
 
 ## Points of interest
 This code has the following points of interest:
