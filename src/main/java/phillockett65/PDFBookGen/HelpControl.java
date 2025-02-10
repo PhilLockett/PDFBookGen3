@@ -179,7 +179,7 @@ public class HelpControl extends Stage {
             new P("The editable “Output File Name” text field allows for the output file name to be specified. "),
             new P("This will automatically have the “.pdf” extension added and, by default, uses the same directory as the Source document. "),
             new P("The read-only “Generate Document” text field displays the full output document file path. "),
-            new P("Clicking the “Generate” button at the bottom of the window will generate the output document using the options selected. "),
+            new P("Clicking the “Generate” button will generate the output document using the options selected. "),
             new P("Alternatively use the pull-down menu option “File / Generate Booklet”. ")
             ),
         new PFlow(
@@ -191,7 +191,7 @@ public class HelpControl extends Stage {
             ),
         new PFlow(
             new P("The “First Page” and “Last Page” spinners allow a sub-section of the source document to be selected if the whole document is not required. "),
-            new P("The “Total Page Count” is calculated from these spinners. ")
+            new P("The values for “Source Document Page Count” and “Generated Document Sheet Count” are calculated from these spinners. ")
             ),
         new PFlow(
             new P("Typically the two pages on the reverse side of the sheet need to be rotated relative to those on the front if the output document is being printed on a full-duplex printer. "),
