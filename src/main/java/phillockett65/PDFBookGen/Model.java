@@ -569,37 +569,37 @@ public class Model {
     /**
      * @return the number of source pages in the generated document.
      */
-    public int getOutputPageCount() { return signature.getOutputPageCount(); }
+    public int getOutputPageCount() { return signature.pageCount; }
 
     /**
      * @return the number of sheets of paper needed for the generated document.
      */
-    public int getOutputSheetCount() { return signature.getOutputSheetCount(); }
+    public int getOutputSheetCount() { return signature.sheetCount; }
 
     /**
      * @return the number of source pages in a signature.
      */
-    public int getSigPageCount() { return signature.getSigPageCount(); }
+    public int getSigPageCount() { return signature.sigPageCount; }
 
     /**
      * @return the number of signatures that will be generated.
      */
-    public int getSigCount() { return signature.getSigCount(); }
+    public int getSigCount() { return signature.sigCount; }
 
     /**
      * @return the source page number that the last signature starts with.
      */
-    public int getLastSigFirstPage() { return signature.getLastSigFirstPage(); }
+    public int getLastSigFirstPage() { return signature.lastSigFirstPage; }
 
     /**
      * @return the number of source pages in the last signature.
      */
-    public int getLastSigPageCount() { return signature.getLastSigPageCount(); }
+    public int getLastSigPageCount() { return signature.lastSigPageCount; }
 
     /**
      * @return the number of blank pages in the last signature.
      */
-    public int getLastSigBlankCount() { return signature.getLastSigBlankCount(); }
+    public int getLastSigBlankCount() { return signature.lastSigBlankCount; }
 
 
     /**

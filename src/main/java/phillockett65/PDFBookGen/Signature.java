@@ -24,26 +24,64 @@
  * sheets in a signature are made. A source page is a page from the source 
  * document. The generated document has 2 source pages on each side of each 
  * sheet of paper, so there are 4 source pages on each printed sheet.
- * 
- * Available calculated values are:
- *   o Number of source pages in the generated document
- *   o Number of sheets of paper needed for the generated document
- *   o Number of source pages in a signature
- *   o Number of signatures that will be generated
- *   o Source page number that the last signature starts with
- *   o Number of source pages in the last signature
- *   o Number of blank pages in the last signature
  */
 package phillockett65.PDFBookGen;
 
 public class Signature {
-    private final int pageCount;
-    private final int sheetCount;
-    private final int sigPageCount;
-    private final int sigCount;
-    private final int lastSigFirstPage;
-    private final int lastSigPageCount;
-    private final int lastSigBlankCount;
+    /**
+     * Number of source pages in the generated document.
+     */
+    public final int pageCount;
+
+    /**
+     * Number of sheets of paper needed for the generated document.
+     */
+    public final int sheetCount;
+
+    /**
+     * Number of source pages in a signature.
+     */
+    public final int sigPageCount;
+
+    /**
+     * Number of signatures that will be generated.
+     */
+    public final int sigCount;
+
+    /**
+     * Source page number that the last signature starts with.
+     */
+    public final int lastSigFirstPage;
+
+    /**
+     * Number of source pages in the last signature.
+     */
+    public final int lastSigPageCount;
+
+    /**
+     * Number of blank pages in the last signature.
+     */
+    public final int lastSigBlankCount;
+
+    /**
+     * Calculate the number of sheets of paper needed for the generated 
+     * document.
+     * @param sigSize number of sheets of paper in each signature.
+     * @return the calculated sheet count.
+     */
+    private int calculateSheetCount(int sigSize) {
+        int count;
+
+        // May only need a partial last signature.
+        if (lastSigPageCount < (sigPageCount / 2)) {
+            count = (sigCount-1) * sigSize;
+            count += (lastSigPageCount+1) / 2;
+        } else {
+            count = sigCount * sigSize;
+        }
+
+        return count;
+    }
 
     /**
      * Construct a Signature and populate it with the required data.
@@ -55,7 +93,6 @@ public class Signature {
     {
         final int pageDiff = lastPage - firstPage;
         pageCount = pageDiff + 1;
-        sheetCount = ((pageCount-1) / 4) + 1;
         sigPageCount = sigSize * 4;
         final int fullSigCount = pageDiff / sigPageCount;
         final int fullSigPageCount = fullSigCount * sigPageCount;
@@ -63,41 +100,8 @@ public class Signature {
         lastSigFirstPage = firstPage + fullSigPageCount;
         lastSigPageCount = pageCount - fullSigPageCount;
         lastSigBlankCount = sigPageCount - lastSigPageCount;
+
+        sheetCount = calculateSheetCount(sigSize);
     }
-
-    /**
-     * @return the number of source pages in the generated document.
-     */
-    public int getOutputPageCount() { return pageCount; }
-
-    /**
-     * @return the number of sheets of paper needed for the generated document.
-     */
-    public int getOutputSheetCount() { return sheetCount; }
-
-    /**
-     * @return the number of source pages in a signature.
-     */
-    public int getSigPageCount() { return sigPageCount; }
-
-    /**
-     * @return the number of signatures that will be generated.
-     */
-    public int getSigCount() { return sigCount; }
-
-    /**
-     * @return the source page number that the last signature starts with.
-     */
-    public int getLastSigFirstPage() { return lastSigFirstPage; }
-
-    /**
-     * @return the number of source pages in the last signature.
-     */
-    public int getLastSigPageCount() { return lastSigPageCount; }
-
-    /**
-     * @return the number of blank pages in the last signature.
-     */
-    public int getLastSigBlankCount() { return lastSigBlankCount; }
 
 }
