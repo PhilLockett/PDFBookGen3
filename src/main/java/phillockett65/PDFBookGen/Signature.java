@@ -70,15 +70,13 @@ public class Signature {
      * @return the calculated sheet count.
      */
     private int calculateSheetCount(int sigSize) {
-        int count;
-
-        // May only need a partial last signature.
-        if (lastSigPageCount < (sigPageCount / 2)) {
-            count = (sigCount-1) * sigSize;
-            count += (lastSigPageCount+1) / 2;
-        } else {
-            count = sigCount * sigSize;
+        
+        if (lastSigPageCount >= (sigPageCount / 2)) {
+            return sigCount * sigSize;
         }
+
+        int count = (sigCount-1) * sigSize;
+        count += (lastSigPageCount+1) / 2;
 
         return count;
     }
