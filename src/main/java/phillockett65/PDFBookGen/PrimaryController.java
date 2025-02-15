@@ -50,6 +50,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import phillockett65.Debug.Debug;
 import phillockett65.PDFBookGen.Command.FirstPageCommand;
+import phillockett65.PDFBookGen.Command.GenerateCommand;
 import phillockett65.PDFBookGen.Command.Invoker;
 import phillockett65.PDFBookGen.Command.LastPageCommand;
 import phillockett65.PDFBookGen.Command.OutputDocumentCommand;
@@ -249,11 +250,7 @@ public class PrimaryController {
 
     @FXML
     private void fileSaveOnAction() {
-        if (model.isOutputDocument()) {
-            fileSaved(model.generate());
-        }
-        else
-            launchSaveAsWindow();
+        generate();
     }
 
     @FXML
@@ -288,10 +285,15 @@ public class PrimaryController {
         model.showUserGuide();
     }
 
-    /**
-     * Use a file chooser to select a test file.
-    * @return true if a file was selected and loaded, false otherwise.
-    */
+    private void generate() {
+        if (model.isOutputDocument()) {
+            GenerateCommand command = new GenerateCommand();
+            invoker.invoke(command);
+        } else {
+            launchSaveAsWindow();
+        }
+    }
+
     private void launchLoadWindow() {
         openFile();
     }
@@ -304,12 +306,16 @@ public class PrimaryController {
         if (loaded) {
             syncSourceDocumentTextField();
             setStatusMessage("Loaded file: " + model.getSourceDocument());
+        } else {
+            setStatusMessage("Failed to load file: " + model.getSourceDocument());
         }
     }
 
     public void fileSaved(boolean saved) {
         if (saved) {
             setStatusMessage("Saved file: " + model.getOutputDocument());
+        } else {
+            setStatusMessage("Failed to save file: " + model.getOutputDocument());
         }
     }
 
@@ -442,11 +448,7 @@ public class PrimaryController {
 
     @FXML
     private void generateButtonActionPerformed(ActionEvent event) {
-        final boolean success = model.generate();
-        if (success)
-            setStatusMessage("Generated: " + model.getOutputDocument());
-        else
-            setStatusMessage("Failed to generate: " + model.getOutputDocument());
+        generate();
     }
 
 
