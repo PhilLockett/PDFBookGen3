@@ -151,6 +151,7 @@ public class PDFBook {
             case "A6":      return PDRectangle.A6;
             case "Legal":   return PDRectangle.LEGAL;
             case "Letter":  return PDRectangle.LETTER;
+            case "Tabloid": return PDRectangle.TABLOID;
         }
 
         return PDRectangle.LETTER;

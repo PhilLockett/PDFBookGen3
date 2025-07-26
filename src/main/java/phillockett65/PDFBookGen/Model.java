@@ -534,7 +534,7 @@ public class Model {
      * Initialize "Output Content" panel.
      */
     private void initializeOutputContentPanel() {
-        paperSizeList.addAll("A0", "A1", "A2", "A3", "A4", "A5", "A6", "Letter", "Legal");
+        paperSizeList.addAll("A0", "A1", "A2", "A3", "A4", "A5", "A6", "Letter", "Legal", "Tabloid");
         firstPageSVF = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1);
         lastPageSVF = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1);
     }
