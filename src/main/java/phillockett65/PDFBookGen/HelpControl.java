@@ -277,7 +277,7 @@ public class HelpControl extends Stage {
     private HBox buildOptions() {
         HBox options = new HBox();
 
-        cancel = new Button("Cancel");
+        cancel = new Button("Close");
 
         cancel.setMnemonicParsing(false);
     
@@ -286,7 +286,7 @@ public class HelpControl extends Stage {
             this.close();
         });
 
-        cancel.setTooltip(new Tooltip("Cancel Help"));
+        cancel.setTooltip(new Tooltip("Close User Guide"));
 
         options.getChildren().add(cancel);
 
